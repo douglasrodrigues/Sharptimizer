@@ -6,11 +6,11 @@ namespace Sharptimizer.Benchmarks.CEC
     using Utils;
 
     /// <summary>
-    /// F4 class implements the 7-separable, 1-separable Shifted and Rotated Elliptic's benchmarking function.
+    /// F6 class implements the 7-separable, 1-separable Shifted and Rotated Ackley's benchmarking function.
     /// </summary>
-    /// <remarks>The function is commonly evaluated using x_i ∈ [−100, 100] ∣ i = {1,2,…,n}, n <= 1000.</remarks>
+    /// <remarks>The function is commonly evaluated using x_i ∈ [−32, 32] ∣ i = {1,2,…,n}, n <= 1000.</remarks>
     /// <returns>The benchmarking function output `f(x)`.</returns>
-    public class F4 : CECBenchmark
+    public class F6 : CECBenchmark
     {
         int[] S { get; set; }
 
@@ -29,11 +29,11 @@ namespace Sharptimizer.Benchmarks.CEC
         /// <param name="multimodal">Whether the function is multimodal.</param>
         /// <param name="separable">Whether the function is separable.</param>
         /// <returns></returns>
-        public F4(string name = "F4", string year = "2013", List<string> auxiliaryData = null, int dims = 1000,
+        public F6(string name = "F6", string year = "2013", List<string> auxiliaryData = null, int dims = 1000,
                                                                                     bool continuous = true,
                                                                                     bool convex = true,
                                                                                     bool differentiable = true,
-                                                                                    bool multimodal = false,
+                                                                                    bool multimodal = true,
                                                                                     bool separable = false) : base(name,
                                                                                                                     year,
                                                                                                                     Initialize(auxiliaryData),
@@ -47,7 +47,7 @@ namespace Sharptimizer.Benchmarks.CEC
             // Defines the subsets and weights to be evaluated
             S = new int[] { 50, 25, 25, 100, 50, 25, 25 };
 
-            W = new double[] { 45.6996, 1.5646, 18465.3234, 0.0110, 13.6259, 0.3015, 59.6078 };
+            W = new double[] { 0.0352, 5.3156e-05, 0.8707, 49513.7420, 0.0831, 3.4764e-05, 282.2934 };
         }
 
         private static List<string> Initialize(List<string> auxiliaryData)
@@ -56,7 +56,7 @@ namespace Sharptimizer.Benchmarks.CEC
         }
 
         /// <summary>
-        /// Executes the 7-separable, 1-separable Shifted and Rotated Elliptic's benchmarking function.
+        /// Executes the 7-separable, 1-separable Shifted and Rotated Ackley's benchmarking function.
         /// </summary>
         /// <param name="x">An input array for calculating the function's output.</param>
         /// <returns>The benchmarking function output `f(x)`.</returns>
@@ -101,7 +101,7 @@ namespace Sharptimizer.Benchmarks.CEC
                     }
 
                     // Rotates the input based on rotation matrix
-                    z = Matrix.Product(R25, y[n..(n+tuple.s)]);
+                    z = Matrix.Product(R25, y[n..(n + tuple.s)]);
                 }
                 // Checks if the subset has 50 features
                 else if (tuple.s == 50)
@@ -114,7 +114,7 @@ namespace Sharptimizer.Benchmarks.CEC
                     }
 
                     // Rotates the input based on rotation matrix
-                    z = Matrix.Product(R50, y[n..(n+tuple.s)]);
+                    z = Matrix.Product(R50, y[n..(n + tuple.s)]);
                 }
                 // Checks if the subset has 100 features
                 else if (tuple.s == 100)
@@ -127,10 +127,13 @@ namespace Sharptimizer.Benchmarks.CEC
                     }
 
                     // Rotates the input based on rotation matrix
-                    z = Matrix.Product(R100, y[n..(n+tuple.s)]);
+                    z = Matrix.Product(R100, y[n..(n + tuple.s)]);
                 }
+                // Applies the irregulary, asymmetry and diagonal transforms
+                z = T_asymmetry(T_irregularity(z), 0.2).Zip(T_diagonal(z.Length, 10.0), (a, b) => a * b).ToArray();
+
                 // Sums up the calculated fitness multiplied by its corresponding weight
-                f += tuple.w * new HighConditionedElliptic().Execute(T_irregularity(z));
+                f += tuple.w * new Ackley1().Execute(z);
 
                 // Also increments the dimension counter
                 n += tuple.s;
@@ -138,9 +141,12 @@ namespace Sharptimizer.Benchmarks.CEC
 
             // Lastly, gathers the remaining positions
             z = y[n..];
-            
+
+            // Applies the irregulary, asymmetry and diagonal transforms
+            z = T_asymmetry(T_irregularity(z), 0.2).Zip(T_diagonal(z.Length, 10.0), (a, b) => a * b).ToArray();
+
             // Calculates their fitness and sums up to produce the final result
-            f += new HighConditionedElliptic().Execute(T_irregularity(z));
+            f += new Ackley1().Execute(z);
 
             return f;
         }

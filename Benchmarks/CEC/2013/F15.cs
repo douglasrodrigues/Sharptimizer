@@ -4,13 +4,14 @@ namespace Sharptimizer.Benchmarks.CEC
     using System.Collections.Generic;
     using System.Linq;
     using Math;
+    using Utils;
 
     /// <summary>
-    /// F2 class implements the Shifted Rastrigin's benchmarking function.
+    /// F15 class implements the Shifted Schwefel's Problem 1.2 benchmarking function.
     /// </summary>
-    /// <remarks>The function is commonly evaluated using x_i ∈ [−5, 5] ∣ i = {1,2,…,n}, n <= 1000.</remarks>
+    /// <remarks>The function is commonly evaluated using x_i ∈ [−100, 100] ∣ i = {1,2,…,n}, n <= 1000.</remarks>
     /// <returns>The benchmarking function output `f(x)`.</returns>
-    public class F2 : CECBenchmark
+    public class F15 : CECBenchmark
     {
         /// <summary>
         /// Initialization method.
@@ -25,12 +26,12 @@ namespace Sharptimizer.Benchmarks.CEC
         /// <param name="multimodal">Whether the function is multimodal.</param>
         /// <param name="separable">Whether the function is separable.</param>
         /// <returns></returns>
-        public F2(string name = "F2", string year = "2013", List<string> auxiliaryData = null, int dims = 1000,
+        public F15(string name = "F15", string year = "2013", List<string> auxiliaryData = null, int dims = 1000,
                                                                                     bool continuous = true,
                                                                                     bool convex = true,
                                                                                     bool differentiable = true,
-                                                                                    bool multimodal = true,
-                                                                                    bool separable = true) : base(name,
+                                                                                    bool multimodal = false,
+                                                                                    bool separable = false) : base(name,
                                                                                                                     year,
                                                                                                                     Initialize(auxiliaryData),
                                                                                                                     dims,
@@ -47,7 +48,7 @@ namespace Sharptimizer.Benchmarks.CEC
         }
 
         /// <summary>
-        /// Executes the Shifted Rastrigin's benchmarking function.
+        /// Executes the Shifted Schwefel's Problem 1.2 benchmarking function.
         /// </summary>
         /// <param name="x">An input array for calculating the function's output.</param>
         /// <returns>The benchmarking function output `f(x)`.</returns>
@@ -59,19 +60,24 @@ namespace Sharptimizer.Benchmarks.CEC
                 o = DynamicProperties["o"] as double[];
             }
 
-            // Re-calculates the input using the proposed transforms
-            var z = T_asymmetry(
-                        T_irregularity(Matrix.Subtract(x, o)), 0.2)
-                                .Zip(T_diagonal(x.Length, 10.0), (a, b) => a * b).ToArray();
+            // Re-calculates the input
+            var z = T_asymmetry(T_irregularity(Matrix.Subtract(x, o)), 0.2);
 
-            var f = new double[x.Length];
+            // Instantiating function
+            var f = 0.0;
 
+            // For every input dimension
             for (int i = 0; i < x.Length; i++)
             {
-                f[i] = Math.Pow(z[i], 2) - 10.0 * Math.Cos(2.0 * Math.PI * z[i]) + 10.0;
+                // For `j` in `i` range
+                for (int j = 0; j < i; j++)
+                {
+                    // Calculating the Schwefel's Problem 1.2 function
+                    f += Math.Pow(z[j], 2);
+                }
             }
-            
-            return f.Sum();
+
+            return f;
         }
     }
 }

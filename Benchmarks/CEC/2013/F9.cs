@@ -3,14 +3,13 @@ namespace Sharptimizer.Benchmarks.CEC
     using System.Collections.Generic;
     using System.Linq;
     using Math;
-    using Utils;
 
     /// <summary>
-    /// F4 class implements the 7-separable, 1-separable Shifted and Rotated Elliptic's benchmarking function.
+    /// F9 class implements the 20-nonseparable Shifted and Rotated Rastrigin's benchmarking function.
     /// </summary>
-    /// <remarks>The function is commonly evaluated using x_i ∈ [−100, 100] ∣ i = {1,2,…,n}, n <= 1000.</remarks>
+    /// <remarks>The function is commonly evaluated using x_i ∈ [−5, 5] ∣ i = {1,2,…,n}, n <= 1000.</remarks>
     /// <returns>The benchmarking function output `f(x)`.</returns>
-    public class F4 : CECBenchmark
+    public class F9 : CECBenchmark
     {
         int[] S { get; set; }
 
@@ -29,11 +28,11 @@ namespace Sharptimizer.Benchmarks.CEC
         /// <param name="multimodal">Whether the function is multimodal.</param>
         /// <param name="separable">Whether the function is separable.</param>
         /// <returns></returns>
-        public F4(string name = "F4", string year = "2013", List<string> auxiliaryData = null, int dims = 1000,
+        public F9(string name = "F9", string year = "2013", List<string> auxiliaryData = null, int dims = 1000,
                                                                                     bool continuous = true,
                                                                                     bool convex = true,
                                                                                     bool differentiable = true,
-                                                                                    bool multimodal = false,
+                                                                                    bool multimodal = true,
                                                                                     bool separable = false) : base(name,
                                                                                                                     year,
                                                                                                                     Initialize(auxiliaryData),
@@ -45,9 +44,10 @@ namespace Sharptimizer.Benchmarks.CEC
                                                                                                                     separable)
         {
             // Defines the subsets and weights to be evaluated
-            S = new int[] { 50, 25, 25, 100, 50, 25, 25 };
+            S = new int[] { 50, 50, 25, 25, 100, 100, 25, 25, 50, 25, 100, 25, 100, 50, 25, 25, 25, 100, 50, 25 };
 
-            W = new double[] { 45.6996, 1.5646, 18465.3234, 0.0110, 13.6259, 0.3015, 59.6078 };
+            W = new double[] { 1756.9969, 570.7338, 3.3559, 1.0364, 62822.2923, 1.7315, 0.0898, 0.0008, 1403745.6363,
+                  8716.2083, 0.0033, 1.3495, 0.0047, 5089.9133, 12.6664, 0.0003, 0.2400, 3.9643, 0.0014, 0.0052 };
         }
 
         private static List<string> Initialize(List<string> auxiliaryData)
@@ -56,7 +56,7 @@ namespace Sharptimizer.Benchmarks.CEC
         }
 
         /// <summary>
-        /// Executes the 7-separable, 1-separable Shifted and Rotated Elliptic's benchmarking function.
+        /// Executes the 20-nonseparable Shifted and Rotated Rastrigin's benchmarking function.
         /// </summary>
         /// <param name="x">An input array for calculating the function's output.</param>
         /// <returns>The benchmarking function output `f(x)`.</returns>
@@ -68,13 +68,6 @@ namespace Sharptimizer.Benchmarks.CEC
             var P = Stochastic.Permutation(null, D).ToArray();
             var n = 0;
             var f = 0.0;
-
-            // Checks if number of dimensions is valid
-            if (D < 302)
-            {
-                // Raises an error
-                throw new SizeError("`D` should be greater than 302");
-            }
 
             double[] o = null;
             if (DynamicProperties.ContainsKey("o"))
@@ -101,7 +94,7 @@ namespace Sharptimizer.Benchmarks.CEC
                     }
 
                     // Rotates the input based on rotation matrix
-                    z = Matrix.Product(R25, y[n..(n+tuple.s)]);
+                    z = Matrix.Product(R25, y[n..(n + tuple.s)]);
                 }
                 // Checks if the subset has 50 features
                 else if (tuple.s == 50)
@@ -114,7 +107,7 @@ namespace Sharptimizer.Benchmarks.CEC
                     }
 
                     // Rotates the input based on rotation matrix
-                    z = Matrix.Product(R50, y[n..(n+tuple.s)]);
+                    z = Matrix.Product(R50, y[n..(n + tuple.s)]);
                 }
                 // Checks if the subset has 100 features
                 else if (tuple.s == 100)
@@ -127,20 +120,17 @@ namespace Sharptimizer.Benchmarks.CEC
                     }
 
                     // Rotates the input based on rotation matrix
-                    z = Matrix.Product(R100, y[n..(n+tuple.s)]);
+                    z = Matrix.Product(R100, y[n..(n + tuple.s)]);
                 }
+                // Applies the irregulary, asymmetry and diagonal transforms
+                z = T_asymmetry(T_irregularity(z), 0.2).Zip(T_diagonal(z.Length, 10.0), (a, b) => a * b).ToArray();
+
                 // Sums up the calculated fitness multiplied by its corresponding weight
-                f += tuple.w * new HighConditionedElliptic().Execute(T_irregularity(z));
+                f += tuple.w * new Rastrigin().Execute(z);
 
                 // Also increments the dimension counter
                 n += tuple.s;
             }
-
-            // Lastly, gathers the remaining positions
-            z = y[n..];
-            
-            // Calculates their fitness and sums up to produce the final result
-            f += new HighConditionedElliptic().Execute(T_irregularity(z));
 
             return f;
         }

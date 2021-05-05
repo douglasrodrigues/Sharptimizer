@@ -1,8 +1,9 @@
-namespace Optimizer.Benchmarks.CEC
+namespace Sharptimizer.Benchmarks.CEC
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Math;
 
     /// <summary>
     /// F3 class implements the Shifted Ackley's benchmarking function.
@@ -11,6 +12,19 @@ namespace Optimizer.Benchmarks.CEC
     /// <returns>The benchmarking function output `f(x)`.</returns>
     public class F3 : CECBenchmark
     {
+        /// <summary>
+        /// Initialization method.
+        /// </summary>
+        /// <param name="name">Name of the function.</param>
+        /// <param name="year">Year of the function.</param>
+        /// <param name="auxiliaryData">Auxiliary variables to be externally loaded.</param>
+        /// <param name="dims">Number of allowed dimensions.</param>
+        /// <param name="continuous">Whether the function is continuous.</param>
+        /// <param name="convex">Whether the function is convex.</param>
+        /// <param name="differentiable">Whether the function is differentiable.</param>
+        /// <param name="multimodal">Whether the function is multimodal.</param>
+        /// <param name="separable">Whether the function is separable.</param>
+        /// <returns></returns>
         public F3(string name = "F3", string year = "2013", List<string> auxiliaryData = null, int dims = 1000,
                                                                                     bool continuous = true,
                                                                                     bool convex = true,
@@ -39,28 +53,16 @@ namespace Optimizer.Benchmarks.CEC
         /// <returns>The benchmarking function output `f(x)`.</returns>
         public double Execute(double[] x)
         {
-            // Re-calculates the input using the proposed transforms
-            var m = T_diagonal(x.Length, 10.0);
-
-            var aux = new double[x.Length];
             double[] o = null;
-
             if (DynamicProperties.ContainsKey("o"))
             {
                 o = DynamicProperties["o"] as double[];
             }
 
-            for (int i = 0; i < x.Length; i++)
-            {
-                aux[i] = x[i] - o[i];
-            }
-
-            var irregularity = T_irregularity(aux);
-
-            var asymmetry = T_asymmetry(irregularity, 0.2);
-
-            // dot product
-            var z = asymmetry.Zip(m, (a, b) => a * b).ToArray();
+            // Re-calculates the input using the proposed transforms
+            var z = T_asymmetry(
+                        T_irregularity(Matrix.Subtract(x, o)), 0.2)
+                                .Zip(T_diagonal(x.Length, 10.0), (a, b) => a * b).ToArray();
 
             // Calculating the 1/n term
             var inv = 1.0 / x.Length;

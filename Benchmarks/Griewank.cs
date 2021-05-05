@@ -1,7 +1,6 @@
-namespace Optimizer.Benchmarks
+namespace Sharptimizer.Benchmarks
 {
     using System;
-    using System.Linq;
     using Utils;
 
     /// <summary>

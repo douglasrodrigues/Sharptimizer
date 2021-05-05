@@ -4,13 +4,14 @@ namespace Sharptimizer.Benchmarks.CEC
     using System.Collections.Generic;
     using System.Linq;
     using Math;
+    using Utils;
 
     /// <summary>
-    /// F2 class implements the Shifted Rastrigin's benchmarking function.
+    /// F12 class implements the Shifted Rosenbrock's benchmarking function.
     /// </summary>
-    /// <remarks>The function is commonly evaluated using x_i ∈ [−5, 5] ∣ i = {1,2,…,n}, n <= 1000.</remarks>
+    /// <remarks>The function is commonly evaluated using x_i ∈ [−100, 100] ∣ i = {1,2,…,n}, n <= 1000.</remarks>
     /// <returns>The benchmarking function output `f(x)`.</returns>
-    public class F2 : CECBenchmark
+    public class F12 : CECBenchmark
     {
         /// <summary>
         /// Initialization method.
@@ -25,7 +26,7 @@ namespace Sharptimizer.Benchmarks.CEC
         /// <param name="multimodal">Whether the function is multimodal.</param>
         /// <param name="separable">Whether the function is separable.</param>
         /// <returns></returns>
-        public F2(string name = "F2", string year = "2013", List<string> auxiliaryData = null, int dims = 1000,
+        public F12(string name = "F12", string year = "2013", List<string> auxiliaryData = null, int dims = 1000,
                                                                                     bool continuous = true,
                                                                                     bool convex = true,
                                                                                     bool differentiable = true,
@@ -47,7 +48,7 @@ namespace Sharptimizer.Benchmarks.CEC
         }
 
         /// <summary>
-        /// Executes the Shifted Rastrigin's benchmarking function.
+        /// Executes the Shifted Rosenbrock's benchmarking function.
         /// </summary>
         /// <param name="x">An input array for calculating the function's output.</param>
         /// <returns>The benchmarking function output `f(x)`.</returns>
@@ -59,19 +60,19 @@ namespace Sharptimizer.Benchmarks.CEC
                 o = DynamicProperties["o"] as double[];
             }
 
-            // Re-calculates the input using the proposed transforms
-            var z = T_asymmetry(
-                        T_irregularity(Matrix.Subtract(x, o)), 0.2)
-                                .Zip(T_diagonal(x.Length, 10.0), (a, b) => a * b).ToArray();
+            // Re-calculates the input
+            var z = Matrix.Subtract(x, o);
 
-            var f = new double[x.Length];
+            // Instantiating function
+            var f = 0.0;
 
+            // For every input dimension
             for (int i = 0; i < x.Length; i++)
             {
-                f[i] = Math.Pow(z[i], 2) - 10.0 * Math.Cos(2.0 * Math.PI * z[i]) + 10.0;
+                f += (100 * Math.Pow((Math.Pow(z[i], 2) - z[i+1]), 2) + Math.Pow((z[i] - 1), 2));
             }
-            
-            return f.Sum();
+
+            return f;
         }
     }
 }

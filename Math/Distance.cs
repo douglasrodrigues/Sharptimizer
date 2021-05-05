@@ -1,4 +1,4 @@
-namespace Optimizer.Math
+namespace Sharptimizer.Math
 {
     public static class Distance
     {

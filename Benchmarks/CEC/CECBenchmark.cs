@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 
-namespace Optimizer.Benchmarks.CEC
+namespace Sharptimizer.Benchmarks.CEC
 {
     using Utils;
 
@@ -40,7 +40,7 @@ namespace Optimizer.Benchmarks.CEC
 
         // The inner dictionary to store field names and values.
         public Dictionary<string, object> DynamicProperties = new Dictionary<string, object>();
-        
+
         /// <summary>
         /// Initialization method.
         /// </summary>
@@ -114,10 +114,20 @@ namespace Optimizer.Benchmarks.CEC
                 // Note that it will always be NAME_VARIABLE
                 var dataFile = $"{name}_{item}";
 
-                // Loads the data to a temporary variable
-                var tmp = Loader.LoadCECAuxiliary(dataFile, year);
+                if (item == "o")
+                {
+                    // Loads the data to a temporary variable
+                    var tmp = Loader.LoadCECAuxiliary(dataFile, year);
 
-                this.AddProperty(item, tmp);
+                    this.AddProperty(item, tmp);
+                }
+                else if (item == "R25" || item == "R50" || item == "R100")
+                {
+                    // Loads the data to a temporary variable
+                    var tmp = Loader.LoadCECAuxiliary<double[][]>(dataFile, year);
+
+                    this.AddProperty(item, tmp);
+                }
             }
         }
 
@@ -136,7 +146,7 @@ namespace Optimizer.Benchmarks.CEC
             // Defines both c_1 and c_2 transformations
             var c_1 = Enumerable.Range(0, x.Length).Select(i => x[i] > 0 ? 10 : 5.5).ToArray();
             var c_2 = Enumerable.Range(0, x.Length).Select(i => x[i] > 0 ? 7.9 : 3.1).ToArray();
-            
+
             double[] x_t = new double[x.Length];
 
             // Re-calculates the input
@@ -179,13 +189,13 @@ namespace Optimizer.Benchmarks.CEC
             var dims = Utils.LinSpace(0, D - 1, D).ToArray();
 
             var x = new double[D];
-            
+
             for (int i = 0; i < D; i++)
             {
                 var a = System.Math.Pow(alpha, 0.5);
                 x[i] = (dims[i] / (D - 1)) * a;
             }
-            
+
             // 
             return x;
         }

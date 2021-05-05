@@ -1,4 +1,4 @@
-namespace Optimizer.Utils
+namespace Sharptimizer.Utils
 {
     using System;
 

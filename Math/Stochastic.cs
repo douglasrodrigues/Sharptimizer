@@ -1,13 +1,14 @@
-namespace Optimizer.Math
+namespace Sharptimizer.Math
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Utils;
 
-    static class Stochastic
+    public static class Stochastic
     {
         static readonly Random Random;
-        
+
         static Stochastic()
         {
             Random = new Random();
@@ -43,6 +44,20 @@ namespace Optimizer.Math
                 randomSortTable[Random.NextDouble()] = item;
 
             return randomSortTable.OrderBy(KVP => KVP.Key).Take(maxCount).Select(KVP => KVP.Value);
+        }
+
+        public static IEnumerable<int> Permutation(IEnumerable<int> list = null, int n = 1)
+        {
+            if (list == null)
+            {
+                var numbers = Enumerable.Range(0, n);
+
+                return numbers.OrderBy(x => Random.Next());
+            }
+            else
+            {
+                return list.OrderBy(x => Random.Next());
+            }
         }
     }
 }

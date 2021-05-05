@@ -1,9 +1,10 @@
-namespace Optimizer.Benchmarks.CEC
+namespace Sharptimizer.Benchmarks.CEC
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Utils;
+    using Math;
 
     /// <summary>
     /// F1 class implements the Shifted Elliptic's benchmarking function.
@@ -12,6 +13,19 @@ namespace Optimizer.Benchmarks.CEC
     /// <returns>The benchmarking function output `f(x)`.</returns>
     public class F1 : CECBenchmark
     {
+        /// <summary>
+        /// Initialization method.
+        /// </summary>
+        /// <param name="name">Name of the function.</param>
+        /// <param name="year">Year of the function.</param>
+        /// <param name="auxiliaryData">Auxiliary variables to be externally loaded.</param>
+        /// <param name="dims">Number of allowed dimensions.</param>
+        /// <param name="continuous">Whether the function is continuous.</param>
+        /// <param name="convex">Whether the function is convex.</param>
+        /// <param name="differentiable">Whether the function is differentiable.</param>
+        /// <param name="multimodal">Whether the function is multimodal.</param>
+        /// <param name="separable">Whether the function is separable.</param>
+        /// <returns></returns>
         public F1(string name = "F1", string year = "2013", List<string> auxiliaryData = null, int dims = 1000,
                                                                                     bool continuous = true,
                                                                                     bool convex = true,
@@ -44,28 +58,19 @@ namespace Optimizer.Benchmarks.CEC
             var D = x.Length;
             var dims = Utils.LinSpace(0, D - 1, D).ToArray();
 
-            var aux = new double[x.Length];
             double[] o = null;
-
             if (DynamicProperties.ContainsKey("o"))
             {
                 o = DynamicProperties["o"] as double[];
             }
 
-            for (int i = 0; i < x.Length; i++)
-            {
-                aux[i] = x[i] - o[i];
-            }
-
             // Re-calculates the input using the proposed transform
-            var z = T_irregularity(aux);
+            var z = T_irregularity(Matrix.Subtract(x, o));
 
             // Calculating the Shifted Elliptic's function
             for (int i = 0; i < z.Length; i++)
             {
-                var a = Math.Pow(z[i], 2);
-                var b = Math.Pow(10e6, (dims[i] / (D - 1)));
-                z[i] = a * b;
+                z[i] = Math.Pow(10e6, dims[i] / (D - 1)) * Math.Pow(z[i], 2);
             }
 
             return z.Sum();

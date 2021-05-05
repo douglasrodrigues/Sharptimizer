@@ -1,4 +1,4 @@
-namespace Optimizer.Utils
+namespace Sharptimizer.Utils
 {
     /// <summary>
     /// A Benchmark class is the root of any benchmarking function.
