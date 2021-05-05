@@ -46,9 +46,11 @@ If you use Sharptimizer to fulfill any of your needs, please cite us:
 
 We believe that everything has to be easy. Not tricky or daunting, Sharptimizer will be the one-to-go package that you will need, from the very first installation to the daily-tasks implementing needs.
 
-```Step 1: build the package
 ```
-```Step 2: add the Sharptimizer.dll to your project references
+Step 1: build the package
+```
+```
+Step 2: add the Sharptimizer.dll to your project references
 ```
 
 ---

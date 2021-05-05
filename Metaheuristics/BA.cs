@@ -1,4 +1,4 @@
-namespace Optimizer.Metaheuristics
+namespace Sharptimizer.Metaheuristics
 {
     using System;
     using System.Collections.Generic;

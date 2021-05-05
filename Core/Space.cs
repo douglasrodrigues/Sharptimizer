@@ -1,4 +1,4 @@
-namespace Optimizer.Core
+namespace Sharptimizer.Core
 {
     using System;
     using System.Collections.Generic;

@@ -1,4 +1,4 @@
-namespace Optimizer.Decorators
+namespace Sharptimizer.Decorators
 {
     using Core;
 

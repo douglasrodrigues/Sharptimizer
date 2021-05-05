@@ -1,4 +1,4 @@
-namespace Optimizer.Statistics
+namespace Sharptimizer.Statistics
 {
     using System;
     using System.Collections.Generic;

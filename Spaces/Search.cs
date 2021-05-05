@@ -1,4 +1,4 @@
-namespace Optimizer.Spaces
+namespace Sharptimizer.Spaces
 {
     using System;
     using System.Linq;

@@ -1,4 +1,4 @@
-namespace Optimizer
+namespace Sharptimizer
 {
     using System;
     using System.Diagnostics;
