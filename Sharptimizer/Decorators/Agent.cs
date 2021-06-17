@@ -57,7 +57,7 @@ namespace Sharptimizer.Core
         /// <summary>
         /// Clips the agent's decision variables to the bounds limits.
         /// </summary>
-        public void ClipLimits()
+        public void ClipByBounds()
         {
             var bounds = LowerBound.Zip(UpperBound, (n, w) => new { Lower = n, Upper = w });
             foreach (var (bound, index) in bounds.Select((v, i) => (v, i)))

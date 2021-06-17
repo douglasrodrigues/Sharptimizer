@@ -61,9 +61,9 @@ namespace Sharptimizer.Decorators
 
         #endregion
 
-        public void ClipLimits()
+        public void ClipByBounds()
         {
-            _agent.ClipLimits();
+            _agent.ClipByBounds();
         }
 
         public object Clone()

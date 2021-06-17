@@ -29,6 +29,9 @@ namespace Sharptimizer.Core
         /// </summary>
         double[] UpperBound { get; set; }
 
-        public void ClipLimits();
+        /// <summary>
+        /// Clips the agent's decision variables to the bounds limits.
+        /// </summary>
+        public void ClipByBounds();
     }
 }
